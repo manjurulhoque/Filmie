@@ -69,4 +69,9 @@
         <item name="android:textColor">@color/colorSecondaryText</item>
     </style>
 
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/rating_color</item>
+        <!--<item name="colorControlActivated">@color/lightGrey</item>-->
+    </style>
+
 </resources>

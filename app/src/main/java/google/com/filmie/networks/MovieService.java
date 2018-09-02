@@ -8,7 +8,7 @@ import retrofit2.http.Query;
 
 public interface MovieService {
 
-    @GET(MovieConstants.BASE_URL)
+    @GET(MovieConstants.GET_MOVIES_URL)
     Call<MovieList> getMovieList(@Query(MovieConstants.API_KEY) String apiKey,
                                  @Query(MovieConstants.SORT_BY) String sortBy, @Query(MovieConstants.PAGE) int page);
 }

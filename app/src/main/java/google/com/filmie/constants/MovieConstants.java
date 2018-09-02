@@ -6,7 +6,6 @@ public class MovieConstants {
     public static final String BASE_URL = "https://api.themoviedb.org";
     public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
 
-
     public final static String IMAGE_SIZE_SMALL = "w185/";
     public final static String IMAGE_SIZE_LARGE = "w500/";
 
@@ -20,4 +19,9 @@ public class MovieConstants {
     public static final String SORT_BY = "sort_by";
     public static final String PAGE = "page";
     public static final String ID = "id";
+
+    // sorting
+    public static final String SORT_BY_POPULARITY = "popularity.desc";
+    public static final String SORT_BY_RATINGS = "vote_average.desc";
+    public static final String SORT_BY_FAVOURITES = "show_favourites";
 }

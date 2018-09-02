@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Filmie</string>
+
+    <!-- sort by -->
+    <string name="sort_popularity_label" translatable="false">Popular</string>
+    <string name="sort_ratings_label" translatable="false">By Ratings</string>
+    <string name="sort_favourite_label" translatable="false">Favourites</string>
+
+    <string-array name="sort_by" translatable="false">
+        <item>@string/sort_popularity_label</item>
+        <item>@string/sort_ratings_label</item>
+        <item>@string/sort_favourite_label</item>
+    </string-array>
 </resources>
