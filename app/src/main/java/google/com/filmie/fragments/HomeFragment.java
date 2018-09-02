@@ -110,6 +110,7 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
     }
 
     private void getMovies() {
+        movies.clear();
         mProgressDialog.setCancelable(false);
         mProgressDialog.setTitle("Loading...");
         mProgressDialog.show();
@@ -142,7 +143,22 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+        String category = adapterView.getItemAtPosition(i).toString();
+        switch (i) {
+            case 0:
+                sortBy = MovieConstants.SORT_BY_POPULARITY;
+                break;
+            case 1:
+                sortBy = MovieConstants.SORT_BY_RATINGS;
+                break;
+            case 2:
+                sortBy = MovieConstants.SORT_BY_FAVOURITES;
+                break;
+            default:
+                sortBy = MovieConstants.SORT_BY_POPULARITY;
+                break;
+        }
+        getMovies();
     }
 
     @Override
