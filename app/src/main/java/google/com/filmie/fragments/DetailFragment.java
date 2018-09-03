@@ -8,11 +8,13 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import google.com.filmie.R;
 import google.com.filmie.constants.MovieConstants;
 import google.com.filmie.models.Movie;
@@ -60,14 +63,25 @@ public class DetailFragment extends Fragment {
     @BindView(R.id.detail_orginal_language_tv)
     TextView movieOriginalLanguageTv;
 
+    // Reviews Card
+    @BindView(R.id.review_progressbar)
+    ProgressBar reviewsProgressbar;
+
+    @BindView(R.id.no_reviews_tv)
+    TextView noReviewsTv;
+
+    @BindView(R.id.reviews_container)
+    LinearLayout reviewsContainer;
+
     View mView;
     Movie mMovie;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_detail, container, false);
-        ButterKnife.bind(this, mView);
+        unbinder = ButterKnife.bind(this, mView);
 
         if (getArguments() != null) {
             if (getArguments().containsKey("movie")) {
@@ -78,6 +92,7 @@ public class DetailFragment extends Fragment {
             mCollapsingToolbar.setTitle("Select a movie. #Filmie");
         }
 
+        //addBackHomeArrow(mView);
         return mView;
     }
 
@@ -107,6 +122,13 @@ public class DetailFragment extends Fragment {
         movieOriginalLanguageTv.setText(mMovie.getOriginalLanguage());
     }
 
+    private void addBackHomeArrow(View rootView) {
+        final Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -114,9 +136,15 @@ public class DetailFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        unbinder.unbind();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
-
 }
