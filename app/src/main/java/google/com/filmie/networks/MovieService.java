@@ -5,6 +5,7 @@ import google.com.filmie.models.MovieList;
 import google.com.filmie.models.ReviewList;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MovieService {
@@ -14,5 +15,5 @@ public interface MovieService {
                                  @Query(MovieConstants.SORT_BY) String sortBy, @Query(MovieConstants.PAGE) int page);
 
     @GET(MovieConstants.GET_REVIEWS_URL)
-    Call<ReviewList> getReviewList(@Query(MovieConstants.API_KEY) String apiKey);
+    Call<ReviewList> getReviewsList(@Path(MovieConstants.ID) long id, @Query(MovieConstants.API_KEY) String apiKey);
 }

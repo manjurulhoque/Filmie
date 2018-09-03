@@ -21,12 +21,22 @@ import android.widget.Toast;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import google.com.filmie.R;
+import google.com.filmie.constants.ApiKey;
 import google.com.filmie.constants.MovieConstants;
 import google.com.filmie.models.Movie;
+import google.com.filmie.models.Review;
+import google.com.filmie.models.ReviewList;
+import google.com.filmie.networks.MovieService;
+import google.com.filmie.networks.RetrofitBuilder;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class DetailFragment extends Fragment {
 
@@ -64,8 +74,6 @@ public class DetailFragment extends Fragment {
     TextView movieOriginalLanguageTv;
 
     // Reviews Card
-    @BindView(R.id.review_progressbar)
-    ProgressBar reviewsProgressbar;
 
     @BindView(R.id.no_reviews_tv)
     TextView noReviewsTv;
@@ -73,9 +81,13 @@ public class DetailFragment extends Fragment {
     @BindView(R.id.reviews_container)
     LinearLayout reviewsContainer;
 
+    @BindView(R.id.review_progressbar)
+    ProgressBar mProgressBar;
+
     View mView;
-    Movie mMovie;
+    private Movie mMovie;
     private Unbinder unbinder;
+    private List<Review> mReviews = new ArrayList<Review>();
 
     @Nullable
     @Override
@@ -101,6 +113,7 @@ public class DetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         setupDetails();
+        getReviews();
     }
 
     private void setupDetails() {
@@ -122,8 +135,63 @@ public class DetailFragment extends Fragment {
         movieOriginalLanguageTv.setText(mMovie.getOriginalLanguage());
     }
 
+    private void getReviews() {
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
+        MovieService service = RetrofitBuilder.buildRetrofit().create(MovieService.class);
+
+        Call<ReviewList> call = service.getReviewsList(mMovie.getId(), ApiKey.KEY);
+        call.enqueue(new retrofit2.Callback<ReviewList>() {
+            @Override
+            public void onResponse(Call<ReviewList> call, Response<ReviewList> response) {
+
+                if (response.code() == 200) {
+                    ReviewList reviewList = response.body();
+                    for (int i = 0; i < reviewList.getResults().size(); i++) {
+                        mReviews.add(reviewList.results.get(i));
+                    }
+                    //Toast.makeText(getContext(), mReviews.get(0).getAuthor(), Toast.LENGTH_SHORT).show();
+                }
+                addReviews();
+            }
+
+            @Override
+            public void onFailure(Call<ReviewList> call, Throwable t) {
+                noReviewsTv.setText("Error fetching reviews!!");
+                noReviewsTv.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void addReviews() {
+        if (mReviews.isEmpty()) {
+            mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+            noReviewsTv.setText("No review found!!");
+            noReviewsTv.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+            final LayoutInflater inflater = LayoutInflater.from(getActivity());
+            for (int i = 0; i < mReviews.size(); i++) {
+                Review review = mReviews.get(i);
+
+                final View reviewView = inflater.inflate(R.layout.layout_review_single, reviewsContainer, false);
+                TextView reviewAuthor = ButterKnife.findById(reviewView, R.id.review_by);
+                TextView reviewContent = ButterKnife.findById(reviewView, R.id.review_content);
+                reviewAuthor.setText("Author: " + review.getAuthor());
+                reviewContent.setText(review.getContent());
+                reviewsContainer.addView(reviewView);
+                if (i < mReviews.size() - 1) {
+                    final View dividerView = inflater.inflate(R.layout.divider_content,
+                            reviewsContainer, false);
+                    View divider = ButterKnife.findById(dividerView, R.id.divider_content);
+                    reviewsContainer.addView(divider);
+                }
+            }
+            noReviewsTv.setVisibility(View.GONE);
+        }
+    }
+
     private void addBackHomeArrow(View rootView) {
-        final Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        final Toolbar toolbar = rootView.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
