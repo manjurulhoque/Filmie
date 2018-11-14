@@ -1,4 +1,4 @@
-Filmie - An Android app for browsing movies
+# Filmie - An Android app for browsing movies
 
 # Preview
 ![one](screenshots/one.png?raw=true "Title")
